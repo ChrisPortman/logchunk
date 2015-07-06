@@ -113,4 +113,4 @@ The scaleability of a single worker will largely depend on the quality of the ch
 
 ## Output
 
-At this stage the output is paths are not implemented.  Im actually thinking of just having it put the results back onto a different beanstalk queue to be picked up by another process to do something with such as a process who's sole function is to read JSON off beanstalk and push it to Elastic Search or something similar.
+At this stage the output is paths are not implemented.  Im actually thinking of just having it put the results back onto a different beanstalk queue to be picked up by another process to do something with. For example, a process who's sole function is to read JSON off beanstalk and push it to Elastic Search or something similar.
