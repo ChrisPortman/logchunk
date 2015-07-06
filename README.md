@@ -1,5 +1,9 @@
 # LogChunk
 
+## CURRENT STATUS
+
+I've so far spent a total of 1 day on this between entertaining a 2 year old.  It's maturity is about on par with that 2 year old but way less cute.
+
 ## Overview
 
 Logchunk is an attempt at a perl based alternative to Logstash and similar pieces of software.  It is meant to be vastly simpler and hopefully more scaleable.
