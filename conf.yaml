@@ -1,0 +1,13 @@
+---
+  beanstalk_server: localhost
+  beanstalk_tube: syslog
+
+  chunkers:
+    test1:
+      regex: '^TEST1\sVAL1=(?<val1>[^\s]+)\sVAL2=(?<val2>[^\s]+)'
+    test2:
+      regex: '^TEST\sVAL1=(?<val1>[^\s]+)\sVAL2=(?<val2>[^\s]+)'
+      programs: chris
+      severities: notice
+      facilities: user
+      hosts: hicks
