@@ -1,6 +1,7 @@
 package Logchunk::Config;
 
 use Moo;
+with 'MooX::Singleton';
 use YAML 'LoadFile';
 
 has file => (

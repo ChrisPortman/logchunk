@@ -15,7 +15,7 @@ GetOptions (
   "config_file=s" => \$configFile,
 );
 
-my $config = Logchunk::Config->new( file => $configFile );
+my $config = Logchunk::Config->instance( file => $configFile );
 
 while ( scalar(@pids) < $workers ) {
   if (my $pid = fork()) {

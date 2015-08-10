@@ -2,6 +2,14 @@
   beanstalk_server: localhost
   beanstalk_tube: syslog
 
+  outputs:
+    file:
+      file: '/tmp/logchunk.log'
+    elasticsearch:
+      servers: '192.168.122.14:9200'
+
+  default_output: elasticsearch
+
   chunkers:
     test1:
       regex: '^TEST1\sVAL1=(?<val1>[^\s]+)\sVAL2=(?<val2>[^\s]+)'

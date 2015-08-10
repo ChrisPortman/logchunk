@@ -6,6 +6,7 @@ use Beanstalk::Client;
 use Data::Dumper;
 use Logchunk::Config;
 use Logchunk::Chunker;
+use Logchunk::Output;
 
 
 has config => (
@@ -44,6 +45,25 @@ has chunkers => (
   },
 );
 
+has default_output => (
+  is       => 'ro',
+  required => 1,
+  default  => sub {
+    my $self        = shift;
+    my $output      = Logchunk::Config->instance()->get('default_output');
+    my $output_conf = Logchunk::Config->instance()->get('outputs');
+    my $obj;
+
+    if ( $output_conf->{$output} ) {
+      if ( Logchunk::Output->plugin_exists($output) ) {
+        $obj = Logchunk::Output->plugin($output)->new( %{ $output_conf->{$output} } );
+      }
+    }
+
+    return $obj;
+  },
+);
+
 sub run {
   my $self  = shift;
   my $loops = 0;
@@ -66,16 +86,25 @@ sub run {
       @optimised_chunker_list = sort { $b->{'match_count'} <=> $a->{'match_count'} } @{$self->chunkers};
     }
 
+    my $submitted = 0;
+
     CHUNKER:
     for my $chunker ( @optimised_chunker_list ) {
       if ( my $chunked = $chunker->check($data) ) {
-        print "Matched ".$chunker->{'name'}." (".$chunker->{'match_count'}." matches)!\n";
         $data = $chunked;
+        for my $output ( @{ $chunker->outputs() } ) {
+          $output->submit($data);
+        }
+        $submitted = 1;
         last CHUNKER;
       }
     }
+    
+    unless ($submitted) {
+      #submit using the default output
+      $self->default_output() and $self->default_output()->submit($data);
+    }
 
-    $self->submitResult($data);
     $loops ++;
   }
 }
@@ -83,13 +112,6 @@ sub run {
 sub get_job {
   my $self = shift;
   return $self->bsClient->reserve();
-}
-
-sub submitResult {
-  my $self   = shift;
-  my $result = shift || return;
-  
-  print Dumper($result);
 }
 
 sub connect_beanstalk {
